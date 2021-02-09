@@ -1,0 +1,7 @@
+__pycache__/
+imgs/
+api/.env
+env/.env
+env/.env
+env/.env_prod
+env/env.json

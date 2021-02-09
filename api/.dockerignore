@@ -1,0 +1,12 @@
+__pycache__/
+etc/
+Include/
+Lib/
+Scripts/
+selenium/
+share/
+tcl/
+*.log
+db/
+.git/
+*.tar

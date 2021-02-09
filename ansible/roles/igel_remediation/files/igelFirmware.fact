@@ -1,0 +1,6 @@
+#!/bin/bash
+get_rmsettings_boot
+firmware=`cat /etc/os-release | grep VERSION= | egrep -o "([0-9]{1,}\.)+[0-9]{1,}"`
+pfirmware=`cat /wfs/group.ini | grep IGEL_Zero | egrep -o "([0-9]{1,}\.)+[0-9]{1,}"`
+echo "{\"igel_current_firmware\" : \"${firmware}\", \"igel_pending_firmware\" : \"${pfirmware}\"}"
+

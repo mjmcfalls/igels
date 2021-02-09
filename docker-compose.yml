@@ -1,0 +1,23 @@
+version: '3'
+services:
+  igelapi:
+    build:
+      context: .
+      dockerfile: Dockerfile_api
+    image: igel/igelapi:6
+    container_name: igelapi
+    restart: unless-stopped
+    tty: true
+    working_dir: /app
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./env:/app/env 
+      - ./db:/app/db
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - igel-network
+
+networks:
+  igel-network:
+    driver: bridge

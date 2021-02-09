@@ -1,0 +1,81 @@
+---
+- name: "Create ansible script directory"
+  file:
+    path: "/etc/ansible/scripts"
+    state: "directory"
+
+- name: "Copy clear partition and reboot script"
+  copy:
+    src: /ansible/scripts/clearPartReboot.sh
+    dest: /etc/ansible/scripts/clearPartReboot.sh
+    mode: 0755
+
+- name: "Register filename"
+  shell: echo "{{ ansible_facts['nodename'] }}_$(date +"%Y%m%d%H%M").xwd"
+  register: result
+
+- name: "Capture Display"
+  shell: "DISPLAY=:0 xwd -root -silent > /tmp/{{ result.stdout }}"
+
+- name: "Get file match percent"
+  shell: 'curl -F "file=@/tmp/{{ result.stdout }}" {{ api_uri}}'
+  args:
+    warn: no
+  register: match
+
+- name: "Set broken_match fact"
+  set_fact:
+    broken_match: "{{ match.stdout|from_json }}"
+
+- name: "Test if remediation needed"
+  set_fact:
+    remediation: 1
+  when:
+    - broken_match.match|int >= match_per
+
+- name: "Check if session exists"
+  shell: sh /etc/ansible/scripts/clearPartReboot.sh
+  args:
+    warn: no
+  register: reboot_results
+  async: 120
+  poll: 0
+  when: remediation is defined
+
+- name: Wait for the reboot to complete if there was a change.
+  wait_for_connection:
+    connect_timeout: 20
+    sleep: 5
+    delay: 5
+    timeout: 300
+  when: reboot_results is changed
+
+- name: "Sleep to wait for processing"
+  shell: 'sleep {{ sleep_seconds }}'
+  args:
+    warn: no
+  when: verify_match is defined
+
+- name: "Capture Display post boot"
+  shell: "DISPLAY=:0 xwd -root -silent > /tmp/{{ result.stdout }}"
+
+- name: Verify login screen shows after boot
+  shell: 'curl -F "file=@/tmp/{{ result.stdout }}" {{ validate_uri }}'
+  args:
+    warn: no
+  register: verify_match
+  when: remediation is defined
+
+- name: "Set verify_match fact"
+  set_fact:
+    verify_match: "{{ verify_match.stdout|from_json }}"
+
+- name: "verify_match results"
+  when: verify_match is defined
+  debug:
+    msg: "verify_match: {{ verify_match }}"
+
+- name: "Delete *.xwd"
+  shell: rm -rf /tmp/*.xwd
+  args:
+    warn: no

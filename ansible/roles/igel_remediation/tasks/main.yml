@@ -1,0 +1,3 @@
+---
+- name: Run Igel Remediation role
+  import_tasks: IgelRemediation.yml

@@ -1,0 +1,6 @@
+api_uri: http://APIADDRESS:PORT/api/v1/igel/compare
+validate_uri: http://APIADDRESS:PORT/api/v1/igel/compare?validate=true
+match_per: 97 # Change this to an appropriate match percent
+block_match: 20
+sleep_seconds: 120 # Change to an apprioriate wait in seconds
+script_location: clearPartReboot.sh    

@@ -1,0 +1,12 @@
+FROM python:3.8-slim
+WORKDIR /app/src
+WORKDIR /app/env
+WORKDIR /app
+RUN apt-get update && apt-get install -y libglib2.0-0 imagemagick && rm -rf /var/lib/apt/lists/*
+COPY api/requirements.txt .
+COPY api/ /app
+COPY src/BrokenScreen.png /app/src
+COPY src/WorkingScreen_202005110830.png /app/src
+RUN pip install -r requirements.txt
+EXPOSE 5001/tcp
+CMD ["gunicorn", "-b", "0.0.0.0:5001", "-t", "60", "igelApi:app"]

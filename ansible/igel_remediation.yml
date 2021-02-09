@@ -1,0 +1,7 @@
+- hosts: igels
+  #strategy: free
+  remote_user: root
+  roles:
+    - igel_remediation
+
+

@@ -1,0 +1,14 @@
+---
+- hosts: igels
+  tasks:
+    - name: "Create custom fact directory"
+      file:
+        path: "/etc/ansible/facts.d"
+        state: "directory"
+
+    - name: "Insert igel Firmware Fact"
+      copy:
+        src: /ansible/facts.d/igelFirmware.fact
+        dest: /etc/ansible/facts.d/igelFirmware.fact
+        mode: 0755
+

@@ -1,0 +1,7 @@
+FROM python:3.8-slim
+WORKDIR /app/src
+WORKDIR /app
+COPY ./igelRoundingReport.py /app
+COPY requirements.txt /app
+RUN pip install -r requirements.txt
+CMD ["python", "igelRoundingReport.py"]
